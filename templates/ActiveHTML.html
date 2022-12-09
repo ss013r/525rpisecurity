@@ -1,13 +1,30 @@
 <html>
 	<body>
 		<h1>Security System</h1>
-		<p>System is {{ current_state }}.</p>
+		<p><em>System is {{ current_state }}.</em></p>
+
+		{% if current_state == "disarmed" %}
+		<p>Enter the secret code below to arm the security system.</p>
+		{% endif %}
+
+		{% if current_state == "armed" %}
+		<p>Enter the secret code below to disarm the security system.</p>
+		{% endif %}
+
+		{% if current_state == "triggered" %}
+		<p>The security system is currently triggered! Enter the code on the kepad to prevent an alert!</p>
+		{% endif %}
+
+		{% if current_state == "alert" %}
+		<p>The security system has been triggered! A photo has been sent to the authorities (the owner)!</p>
+		{% endif %}
+
 		<form method="POST">
 			<input type="text" name="user_input">
 			<input type="submit" value="submit">
 		</form>
 		<p>
-			You entered: {{ user_input }}
+			You entered: <b>{{ user_input }}</b>
 		</p>
 	</body>
 </html>

@@ -1,7 +1,7 @@
 # Final Project: Pi Security System
 **CSE-525 (Fall 2022)**  
 ---
-  *Group 9:*  
+  **Group 9:**  
 Tahereh Alamdari  
 Jacob "Hat" Butler  
 Brady Gehrman  
@@ -16,7 +16,7 @@ The Raspberry Pi is connected to a keypad, motion detector (AKA PIR sensor), RGB
 
 ![Diagram of devices connected to the Pi](/assets/Pi-sensor-setup.png)
 
-These are the specific GPIO pins we're using:  
+These are the specific GPIO pins that we're using:  
 ```
 Keypad:
 ROW_PINS = [5, 6, 13, 19] #BCM Numbering
@@ -28,7 +28,7 @@ GPIO 14 (BCM number)
 RGB LED:
 GPIO 17 - RED
 GPIO 27 - GREEN
-GPIO 22 - BLUE 
+GPIO 22 - BLUE
 ```
 
 A user can manage the system by connecting to the website hosted by the Pi. If the motion detector picks up movement, the "alarm" is tripped. A user can enter a secret code in the website if the alarm is not triggered, and onto the keypad attached to the Pi if the alarm is triggered. If the alarm is tripped and is not subsequently deactivated, then a photo of the incident is sent over email to the system's owner.
