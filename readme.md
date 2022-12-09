@@ -1,11 +1,11 @@
 # Final Project: Pi Security System
-# CSE-525 (Fall 2022)
-  *Group 9:*
-Tahereh Alamdari
-Jacob "Hat" Butler
-Brady Gehrman
-Michael Martin
-Dylan Nicholson
+CSE-525 (Fall 2022)  
+  *Group 9:*  
+Tahereh Alamdari  
+Jacob "Hat" Butler  
+Brady Gehrman  
+Michael Martin  
+Dylan Nicholson  
 
 ## Purpose
 This project is serves as a demonstration of what we have learned throughout the CSE/ECE 525 "Microcomputer Design" course at the University of Louisville. As our final project, we decided to create a security system, using a Raspberry Pi connected to a camera, motion detector, and keypad. 
