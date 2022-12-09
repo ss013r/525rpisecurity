@@ -12,15 +12,11 @@ INITIAL_STATE = "disarmed"
 
 app = Flask(__name__)
 
-    #shows hello world:
-##@app.route('/')
-##def index():
-##    return 'Hello, world!'
-@app.route('/')
+@app.route('/') #root directory for website
 def index():
     return render_template('ActiveHTML.html', user_input="",current_state=stateConn2.recv())
 
-@app.route('/', methods=['POST'])
+@app.route('/', methods=['POST']) #root directory for website, POST
 def display_input():
     user_input = request.form['user_input'] #the user's input for the secret code
     conn2.send(user_input)
@@ -70,18 +66,17 @@ def run_website():
 
 def main():
     processes = []
-
+    #web server (Flask) process:
     process = multiprocessing.Process(target=run_website)
     process.start()
     processes.append(process)
-
+    #System process:
     process = multiprocessing.Process(target=system)
     process.start()
     processes.append(process)
- 
+    #wait for all processes to finish
     for process in processes:
         process.join()
-
 
 if __name__ == '__main__':
     main()
