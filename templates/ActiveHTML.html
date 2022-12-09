@@ -1,0 +1,13 @@
+<html>
+	<body>
+		<h1>Security System</h1>
+		<p>System is {{ current_state }}.</p>
+		<form method="POST">
+			<input type="text" name="user_input">
+			<input type="submit" value="submit">
+		</form>
+		<p>
+			You entered: {{ user_input }}
+		</p>
+	</body>
+</html>
