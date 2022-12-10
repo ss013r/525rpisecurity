@@ -51,8 +51,8 @@ def system():
         #Case 2: System is armed, set it to disarmed if code is input on webpage,
         #...but will be able to be triggered by sensors as well.
         while(current_state == "armed"):
-            receivedCode = conn1.poll() #Avoid blocking, poll for webserver request first
-            if receivedCode is True:
+            #Avoid blocking, poll for webserver request first
+            if conn1.poll():
                 #Webserver request came in, handle it:
                 receivedCode = conn1.recv() #flush pipe
                 if receivedCode == SECRET_CODE:
