@@ -6,6 +6,8 @@ import time
 conn1, conn2 = multiprocessing.Pipe(duplex=False) #system is receive-only
 #system/webserver pipe for sending current state between processes:
 stateConn2, stateConn1 = multiprocessing.Pipe(duplex=False) #webserver is receive-only
+#system/sensor pipe for syncing current state between processes:
+sensorConn2, sensorConn1 = multiprocessing.Pipe(duplex=True) #Two-way
 #secret code that disarms system:
 SECRET_CODE = "1234"
 #initial state of system at boot; this gets changed by system():
@@ -69,6 +71,7 @@ def system():
         #Case 3: System is triggered, set it to disarmed if code is input on keypad
         while(current_state == "triggered"):
                 print("current_state set to triggered")
+                #Do NOT send out triggered state to final_project.py! It will handle that.
 
         #Case 4: System is alerted, send out the photo and maybe do other things?
         while(current_state == "alert"):
@@ -89,6 +92,9 @@ def main():
     process = multiprocessing.Process(target=system)
     process.start()
     processes.append(process)
+    # process = multiprocessing.Process(target=bradyMain)
+    # process.start()
+    # processes.append(process)
     #wait for all processes to finish
     for process in processes:
         process.join()
