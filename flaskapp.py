@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request, g
+from flask import Flask, render_template, request
 import multiprocessing
 import time
+import re #regex
 import final_project #final_project.py code
 
 #system/webserver pipe for sending secret code between processes:
@@ -20,16 +21,28 @@ BLANK_CODE = ""
 
 app = Flask(__name__)
 
-@app.route('/') #root directory for website
+#Root directory for website:
+@app.route('/')
 def index():
     conn2.send(BLANK_CODE)
-    return render_template('ActiveHTML.html', user_input=BLANK_CODE, current_state=stateConn2.recv())
+    return render_template('ActiveHTML.html', user_input=BLANK_CODE, 
+                           current_state=stateConn2.recv())
 
-@app.route('/', methods=['POST']) #root directory for website, POST
+#Root directory for website with POST:
+@app.route('/', methods=['POST'])
 def display_input():
-    user_input = request.form['user_input'] #the user's input for the secret code
-    conn2.send(user_input)
-    return render_template('ActiveHTML.html', user_input=user_input, current_state=stateConn2.recv())
+    user_input = request.form['user_input'] #secret code attempt
+    if(user_input == ""):
+        return index()
+    #Enforce regex pattern: four digits (sanitize input)
+    fourDigitPattern = re.compile("([0-9]){4}") 
+    if(fourDigitPattern.fullmatch(user_input) == None):
+        print("HTML POST did not match expected pattern!")
+        return index()
+    #Matched regex, forward input to System
+    conn2.send(fourDigitPattern.fullmatch(user_input).string)
+    return render_template('ActiveHTML.html', user_input=user_input, 
+                           current_state=stateConn2.recv())
 
 def system():
     current_state = INITIAL_STATE
@@ -71,13 +84,12 @@ def system():
         #Case 3: System is triggered, set it to disarmed if code is input on keypad
         while(current_state == "triggered"):
                 print("current_state set to triggered")
-                #Do NOT send out triggered state to final_project.py! It will handle that.
+                #Do NOT send out triggered state to final_project.py! It'll handle it
 
         #Case 4: System is alerted, send out the photo and maybe do other things?
         while(current_state == "alert"):
                 print("current_state set to alert")
 
-            
 
 def run_website():
     app.run(host='0.0.0.0', port=1234)
@@ -93,7 +105,8 @@ def main():
     process.start()
     processes.append(process)
     #Sensor/input logic for connected devices:
-    process = multiprocessing.Process(target=final_project.IntrusionDetection, args=(sensorConn2,))
+    process = multiprocessing.Process(target=final_project.IntrusionDetection, 
+                                      args=(sensorConn2,))
     process.start()
     processes.append(process)
     #wait for all processes to finish
