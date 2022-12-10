@@ -2,7 +2,7 @@
 import RPi.GPIO as GPIO
 from datetime import datetime
 import time
-from picamera import PiCamera
+from picamera import PiCamera, PiCameraError
 from pad4pi import rpi_gpio
 import threading
 from emailModule import *
@@ -103,7 +103,10 @@ def keypadPress(key):
 keypad.registerKeyPressHandler(keypadPress)
 
 # initialize the camera
-camera = PiCamera()
+try:
+    camera = PiCamera()
+except PiCameraError: # for debugging:
+    print("Error: camera could not be initialized. Continuing...")
 
 
 def init():
