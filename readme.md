@@ -9,7 +9,7 @@ Michael Martin
 Dylan Nicholson  
 
 ## Purpose
-This project is serves as a demonstration of what we have learned throughout the CSE/ECE 525 "Microcomputer Design" course at the University of Louisville. For our final project, we decided to create a security system, using a Raspberry Pi connected to a camera, motion detector, and keypad. 
+This project serves as a demonstration of what we have learned throughout the CSE/ECE 525 "Microcomputer Design" course at the University of Louisville. For our final project, we decided to create a security system, using a Raspberry Pi connected to a camera, motion detector, and keypad. 
 
 ## Design and Implementation
 The Raspberry Pi is connected to a keypad, motion detector (AKA PIR sensor), RGB LED, and a Pi camera module. The camera is connected to the Pi via a ribbon cable, and everything else is connected using GPIO pins. The "main" python file that controls everything is `flaskapp.py`, which uses the Flask library to host a web server. The same file also manages the overall state of the system.
