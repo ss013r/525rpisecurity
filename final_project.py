@@ -12,6 +12,7 @@ from emailModule import *
 global deviceId
 global intruderAlert
 global keypadString
+global sensorConn2
 
 
 deviceId = "1234"
@@ -25,7 +26,7 @@ GPIO.setmode(GPIO.BCM)
 
 # this GPIO pin is connected to the infared sensor
 
-PIR_PIN = 0
+PIR_PIN = 14
 
 # Initialize GPIO ports for the led
 
@@ -33,26 +34,26 @@ GPIO.setup(PIR_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 # this GPIO pin is connected to the led light
 
-LED_PIN_RED = 0
-LED_PIN_GRN = 0
-LED_PIN_BLU = 0
+LED_PIN_RED = 17
+LED_PIN_GRN = 27
+LED_PIN_BLU = 22
 
 # Initialize GPIO ports for the LED
 
-GPIO.setup(LED_PIN_RED, GPIO.OUTm, initial=GPIO.LOW)
+GPIO.setup(LED_PIN_RED, GPIO.OUT, initial=GPIO.LOW)
 GPIO.setup(LED_PIN_GRN, GPIO.OUT, initial=GPIO.LOW)
 GPIO.setup(LED_PIN_BLU, GPIO.OUT, initial=GPIO.LOW)
 
 # these GPIO pins are connected to the keypad
-L1 = 0
-L2 = 0
-L3 = 0
-L4 = 0
+L1 = 5
+L2 = 6
+L3 = 13
+L4 = 19
 
-C1 = 0
-C2 = 0
-C3 = 0
-C4 = 0
+C1 = 26
+C2 = 16
+C3 = 20
+C4 = 21
 
 KEYPAD = [
     ["1", "2", "3", "A"],
@@ -157,13 +158,13 @@ def intruderDetected():
     S = threading.Timer(30.0, timerEnd(imagePath))
     S.start()
 
-
-def IntrusionDetection():
+# sensorConn2 is a Connection object for a Pipe, given by flaskapp.py/System
+def IntrusionDetection(sensorConn2):
     try:
         init()
         # program while loop
         while True:
-            # poll the pipe to see our current state:
+            # poll pipe for current state, then handle a change in state from System
             receivedState = sensorConn2.poll()
             if receivedState is not None:
                 receivedState = sensorConn2.recv()  # flush pipe
@@ -171,9 +172,10 @@ def IntrusionDetection():
                     # add the PIR_PIN listener interupt
                     GPIO.add_event_detect(PIR_PIN, GPIO.RISING,
                                           callback=intruderDetected, bouncetime=100)
-                else:
+                elif (receivedState == "disarmed"):
                     # remove the PIR_PIN listener
                     GPIO.remove_event_detect(PIR_PIN)
+            # no change in state from System
             time.sleep(0.1)
 
     except KeyboardInterrupt:
