@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, g
 import multiprocessing
 import time
-# import final_project #final_project.py code
+import final_project #final_project.py code
 
 #system/webserver pipe for sending secret code between processes:
 conn1, conn2 = multiprocessing.Pipe(duplex=False) #system is receive-only
@@ -93,9 +93,9 @@ def main():
     process.start()
     processes.append(process)
     #Sensor/input logic for connected devices:
-    # process = multiprocessing.Process(target=final_project.IntrusionDetection, args=sensorConn2)
-    # process.start()
-    # processes.append(process)
+    process = multiprocessing.Process(target=final_project.IntrusionDetection, args=(sensorConn2,))
+    process.start()
+    processes.append(process)
     #wait for all processes to finish
     for process in processes:
         process.join()
