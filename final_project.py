@@ -10,13 +10,11 @@ from emailModule import *
 
 # global variables
 global deviceId
-global deviceIsArmed
 global intruderAlert
 global keypadString
 
 
 deviceId = "1234"
-deviceIsArmed = False
 intruderAlert = False
 keypadString = ""
 
@@ -75,8 +73,8 @@ keypad = factory.create_keypad(
 
 
 def disarmDevice():
-    # reset the device's armed state
-    deviceIsArmed = False
+    # send via pipe that the device is now disarmed to inform the web/system process
+    sensorConn2.send("disarmed")
     # set intruder alert to false (turns off the LED and breaks out of the main while function)
     intruderAlert = False
 
@@ -84,37 +82,21 @@ def disarmDevice():
 
 
 def keypadPress(key):
-    if (deviceIsArmed):
-        if (intruderAlert):
-            # add key to the end of the keypadString
-            keypadString = keypadString + key
-            # print code to screen
-            print(keypadString)
-            if (len(keypadString) == 4):
-             # 4 symbols were typed, compare the string with that of the password
-                if (keypadString == "1234"):
-                    # disarm the device
-                    disarmDevice()
-                else:
-                    # indicate that the user inputted incorrect pin inside of the console
-                    print("Incorrect Password, Please retype the correct code")
-                    # reset the keypadString
-                    keypadString == ""
-        else:
-            if (key == "#"):
-                print("Disarmed")
-                # remove the PIR_PIN listener
-                GPIO.remove_event_detect(PIR_PIN)
-                # set deviceIsArmed to false
-                deviceIsArmed = False
-    else:
-        if (key == "#"):
-            print("Armed")
-            # arm the device if the "#"" key is pushed on the keypad
-            GPIO.add_event_detect(PIR_PIN, GPIO.RISING,
-                                  callback=intruderDetected, bouncetime=100)
-            # set deviceIsArmed to true
-            deviceIsArmed = True
+    if intruderAlert:
+        # add key to the end of the keypadString
+        keypadString = keypadString + key
+        # print code to screen
+        print(keypadString)
+        if (len(keypadString) == 4):
+         # 4 symbols were typed, compare the string with that of the password
+            if (keypadString == "1234"):
+                # disarm the device
+                disarmDevice()
+            else:
+                # indicate that the user inputted incorrect pin inside of the console
+                print("Incorrect Password, Please retype the correct code")
+                # reset the keypadString
+                keypadString == ""
 
 
 keypad.registerKeyPressHandler(keypadPress)
@@ -161,6 +143,8 @@ def timerEnd(imagePath):
 
 
 def intruderDetected():
+    # send via pipe that the device is triggered to inform the web/system process
+    sensorConn2.send("triggered")
     # remove the PIR_PIN listener
     GPIO.remove_event_detect(PIR_PIN)
     # capture and store an image from the camera
@@ -174,14 +158,26 @@ def intruderDetected():
     S.start()
 
 
-try:
-    init()
-    # program while loop
-    while True:
-        time.sleep(1)
+def IntrusionDetection():
+    try:
+        init()
+        # program while loop
+        while True:
+            # poll the pipe to see our current state:
+            receivedState = sensorConn2.poll()
+            if receivedState is not None:
+                receivedState = sensorConn2.recv()  # flush pipe
+                if (receivedState == "armed"):
+                    # add the PIR_PIN listener interupt
+                    GPIO.add_event_detect(PIR_PIN, GPIO.RISING,
+                                          callback=intruderDetected, bouncetime=100)
+                else:
+                    # remove the PIR_PIN listener
+                    GPIO.remove_event_detect(PIR_PIN)
+            time.sleep(0.1)
 
-except KeyboardInterrupt:
-    print("\nApplication stopped!")
-finally:
-    GPIO.cleanup()
-    keypad.cleanup()
+    except KeyboardInterrupt:
+        print("\nApplication stopped!")
+    finally:
+        GPIO.cleanup()
+        keypad.cleanup()
