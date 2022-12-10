@@ -166,7 +166,7 @@ def IntrusionDetection(sensorConn2):
         while True:
             # poll pipe for current state, then handle a change in state from System
             receivedState = sensorConn2.poll()
-            if receivedState is not None:
+            if receivedState is True:
                 receivedState = sensorConn2.recv()  # flush pipe
                 if (receivedState == "armed"):
                     # add the PIR_PIN listener interupt

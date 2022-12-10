@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, g
 import multiprocessing
 import time
+# import final_project #final_project.py code
 
 #system/webserver pipe for sending secret code between processes:
 conn1, conn2 = multiprocessing.Pipe(duplex=False) #system is receive-only
@@ -35,12 +36,12 @@ def system():
     while(1):
         #Case 1: System is disarmed, set it to armed if secret code is input on webpage
         while(current_state == "disarmed"):
-            print("current_state set to disarmed")
             #Block System process until a webserver request:
             receivedCode = conn1.recv() 
             if receivedCode == SECRET_CODE: #correct code received
                 print("Code accepted while disarmed, arming...")
                 current_state = "armed"
+                sensorConn1.send(current_state) #arm the sensors
             elif receivedCode == BLANK_CODE: #no code received
                 print("Blank code, no POST.")
             else:
@@ -50,21 +51,20 @@ def system():
         #Case 2: System is armed, set it to disarmed if code is input on webpage,
         #...but will be able to be triggered by sensors as well.
         while(current_state == "armed"):
-            print("current_state set to armed")
             receivedCode = conn1.poll() #Avoid blocking, poll for webserver request first
-            if receivedCode is not None:
+            if receivedCode is True:
                 #Webserver request came in, handle it:
                 receivedCode = conn1.recv() #flush pipe
                 if receivedCode == SECRET_CODE:
                     print("Code accepted while armed, disarming...")
                     current_state = "disarmed"
+                    sensorConn1.send(current_state) #arm the sensors
                 elif receivedCode == BLANK_CODE:
                     print("Blank code, no POST.")
                 else:
                     print("Incorrect code sent while armed.")
                 stateConn1.send(current_state)
             else:
-                #Do other things related to sensor/keypad polling here
                 time.sleep(POLLING_INTERVAL)
                 continue
 
@@ -92,7 +92,8 @@ def main():
     process = multiprocessing.Process(target=system)
     process.start()
     processes.append(process)
-    # process = multiprocessing.Process(target=bradyMain)
+    #Sensor/input logic for connected devices:
+    # process = multiprocessing.Process(target=final_project.IntrusionDetection, args=sensorConn2)
     # process.start()
     # processes.append(process)
     #wait for all processes to finish
