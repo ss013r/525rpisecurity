@@ -85,23 +85,35 @@ def disarmDevice():
 
 def keypadPress(key):
     if (deviceIsArmed):
-        # add key to the end of the keypadString
-        keypadString = keypadString + key
-        if (len(keypadString) == 4):
-            # 4 symbols were typed, compare the string with that of the password
-            if (keypadString == "1234"):
-                # disarm the device
-                disarmDevice()
-            else:
-                # indicate that the user inputted incorrect pin inside of the console
-                print("Incorrect Password, Please retype the correct code")
-            # reset the keypadString
-            keypadString == ""
+        if (intruderAlert):
+            # add key to the end of the keypadString
+            keypadString = keypadString + key
+            # print code to screen
+            print(keypadString)
+            if (len(keypadString) == 4):
+             # 4 symbols were typed, compare the string with that of the password
+                if (keypadString == "1234"):
+                    # disarm the device
+                    disarmDevice()
+                else:
+                    # indicate that the user inputted incorrect pin inside of the console
+                    print("Incorrect Password, Please retype the correct code")
+                    # reset the keypadString
+                    keypadString == ""
+        else:
+            if (key == "#"):
+                print("Disarmed")
+                # remove the PIR_PIN listener
+                GPIO.remove_event_detect(PIR_PIN)
+                # set deviceIsArmed to false
+                deviceIsArmed = False
     else:
         if (key == "#"):
+            print("Armed")
             # arm the device if the "#"" key is pushed on the keypad
             GPIO.add_event_detect(PIR_PIN, GPIO.RISING,
                                   callback=intruderDetected, bouncetime=100)
+            # set deviceIsArmed to true
             deviceIsArmed = True
 
 
