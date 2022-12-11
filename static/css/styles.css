@@ -1,0 +1,53 @@
+h1
+{
+	text-align: center;
+	font-family: Verdana, sans-serif;
+	margin-bottom: 1.5em;
+	font-size: 28pt;
+	text-shadow: 1px 2px 1px #888888;
+	color: #45545B;
+}
+body
+{
+	margin: 2% 20% 3% 20%; /*top;right;bottom;left order*/
+	background-color: #e4e7ee;
+}
+.content
+{
+	background-color: white;
+	min-block-size: 360px;
+	border: 2px solid black;
+	border-radius: 8px;
+	padding: 1.2em;
+	background-color: #fefefe;
+	box-shadow: 3px 5px 4px #888888;
+}
+p
+{
+	font-size: 14pt;
+	font-family: Tahoma, sans-serif;
+	margin: 1.5em 0px 1.5em 0px;
+	text-align: left;
+}
+em
+{
+	font-family: Georgia, serif;
+}
+input
+{
+	border: 2px solid #1a1a1f;
+	border-radius: 4px;
+	font-size: 12pt;
+}
+input[type="submit"]
+{
+	box-shadow: 1px 2px 2px #888888;
+}
+/* For mobile devices or smaller browser windows: */
+@media (max-aspect-ratio: 16/16)
+{
+	body
+	{
+		margin: 3% 2% 4% 2%;
+	}
+}
