@@ -10,7 +10,8 @@
 	<body>
 		<div class="content">
 			<h1>Pi Security System</h1>
-			<p style="text-align: center;""><em>System is <b>{{ current_state }}</b>.</em></p>
+			<hr>
+			<p style="text-align: center;"><em>System is <b>{{ current_state }}</b>.</em></p>
 
 			{% if current_state == "disarmed" %}
 			<p>Enter the secret code below (4 digits) to arm the security system.</p>
