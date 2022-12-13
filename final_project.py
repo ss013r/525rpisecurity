@@ -33,6 +33,7 @@ def keypadPress(key):
                 # disarm the device
                 print("disarming device")
                 disarmDevice()
+                keypadString = ""
             else:
                 # indicate that the user inputted incorrect pin inside of the console
                 print("Incorrect Password, Please retype the correct code")
@@ -54,7 +55,7 @@ def flashLED():
     
     while intruderAlert:
         GPIO.output(LED_PIN_RED, GPIO.HIGH)
-        GPIO.output(LED_PIN_GRN, GPIO.HIGH)
+        GPIO.output(LED_PIN_GRN, GPIO.LOW)
         GPIO.output(LED_PIN_BLU, GPIO.LOW)
         time.sleep(0.5)
         GPIO.output(LED_PIN_RED, GPIO.LOW)
@@ -95,6 +96,8 @@ def intruderDetected(channel):
     # set global variable intruderAlert to True
     global intruderAlert #cursed!!!
     intruderAlert = True
+    global keypadString
+    keypadString = "" #clear keypad just in case
     t = threading.Thread(target=flashLED)
     t.start()
     # start the 30 second timer in a different thread
