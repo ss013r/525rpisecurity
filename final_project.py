@@ -48,24 +48,24 @@ def init():
 
 
 def flashLED():
-    print(intruderAlert, ", LED Flash starting...")
+    print("flashLED() Called.")
+    if intruderAlert == True:
+        print("Flashing LED...")
+    
     while intruderAlert:
-        print("LED 1")
         GPIO.output(LED_PIN_RED, GPIO.HIGH)
-        GPIO.output(LED_PIN_GRN, GPIO.LOW)
-        GPIO.output(LED_PIN_BLU, GPIO.LOW)
-        time.sleep(1)
-        print("LED 2")
-        GPIO.output(LED_PIN_RED, GPIO.LOW)
         GPIO.output(LED_PIN_GRN, GPIO.HIGH)
         GPIO.output(LED_PIN_BLU, GPIO.LOW)
-        time.sleep(1)
-        print("LED 2")
+        time.sleep(0.5)
         GPIO.output(LED_PIN_RED, GPIO.LOW)
         GPIO.output(LED_PIN_GRN, GPIO.LOW)
         GPIO.output(LED_PIN_BLU, GPIO.HIGH)
-        time.sleep(1)
-        print("LED End")
+        time.sleep(0.5)
+        
+    GPIO.output(LED_PIN_RED, GPIO.LOW)
+    GPIO.output(LED_PIN_GRN, GPIO.LOW)
+    GPIO.output(LED_PIN_BLU, GPIO.LOW)
+    print("Exiting flashLED()")
 
 
 def takePhoto():
@@ -206,3 +206,4 @@ def IntrusionDetection(scon2, secretCode):
     finally:
         GPIO.cleanup()
         keypad.cleanup()
+        camera.close()
