@@ -9,7 +9,7 @@ def sendEmailAlert(imagePath):
     #Address data
     sender = 'cse525.group9fall2022@gmail.com'
     senderPassword = 'ezsorenzegvutpta'
-    sendTo = 'jacobohcr@gmail.com'
+    sendTo = 'example@example.com'
     
     #Create message
     msg = MIMEMultipart()
