@@ -79,8 +79,9 @@ def takePhoto():
 
 def timerEnd(imagePath):
     # send email to the user as an alert, this picture should hold the timestamp and image that is stored on the pi
-    sendEmailAlert(imagePath)
-    print("email sent.")
+    if(intruderAlert):
+        sendEmailAlert(imagePath)
+        print("email sent.")
 
 
 def intruderDetected(channel):
@@ -111,7 +112,7 @@ def IntrusionDetection(scon2):
 
 
     deviceId = "1234"
-    #intruderAlert = False
+    intruderAlert = False
     keypadString = ""
 
     # GPIO setup
