@@ -8,69 +8,6 @@ import threading
 from emailModule import *
 
 
-# global variables
-global deviceId
-global intruderAlert
-global keypadString
-global sensorConn2
-
-
-deviceId = "1234"
-intruderAlert = False
-keypadString = ""
-
-# GPIO setup
-
-GPIO.setwarnings(False)
-GPIO.setmode(GPIO.BCM)
-
-# this GPIO pin is connected to the infared sensor
-
-PIR_PIN = 14
-
-# Initialize GPIO ports for the led
-
-GPIO.setup(PIR_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-
-# this GPIO pin is connected to the led light
-
-LED_PIN_RED = 17
-LED_PIN_GRN = 27
-LED_PIN_BLU = 22
-
-# Initialize GPIO ports for the LED
-
-GPIO.setup(LED_PIN_RED, GPIO.OUT, initial=GPIO.LOW)
-GPIO.setup(LED_PIN_GRN, GPIO.OUT, initial=GPIO.LOW)
-GPIO.setup(LED_PIN_BLU, GPIO.OUT, initial=GPIO.LOW)
-
-# these GPIO pins are connected to the keypad
-L1 = 5
-L2 = 6
-L3 = 13
-L4 = 19
-
-C1 = 26
-C2 = 16
-C3 = 20
-C4 = 21
-
-KEYPAD = [
-    ["1", "2", "3", "A"],
-    ["4", "5", "6", "B"],
-    ["7", "8", "9", "C"],
-    ["*", "0", "#", "D"]
-]
-
-ROW_PINS = [L1, L2, L3, L4]
-COL_PINS = [C1, C2, C3, C4]
-
-# initialize the keypad library
-factory = rpi_gpio.KeypadFactory()
-keypad = factory.create_keypad(
-    keypad=KEYPAD, row_pins=ROW_PINS, col_pins=COL_PINS)
-
-# function to disarm/reset the device
 
 
 def disarmDevice():
@@ -99,14 +36,6 @@ def keypadPress(key):
                 # reset the keypadString
                 keypadString == ""
 
-
-keypad.registerKeyPressHandler(keypadPress)
-
-# initialize the camera
-try:
-    camera = PiCamera()
-except PiCameraError: # for debugging:
-    print("Error: camera could not be initialized. Continuing...")
 
 
 def init():
@@ -146,7 +75,7 @@ def timerEnd(imagePath):
     print("email sent.")
 
 
-def intruderDetected():
+def intruderDetected(channel):
     # send via pipe that the device is triggered to inform the web/system process
     sensorConn2.send("triggered")
     # remove the PIR_PIN listener
@@ -162,7 +91,88 @@ def intruderDetected():
     S.start()
 
 # sensorConn2 is a Connection object for a Pipe, given by flaskapp.py/System
-def IntrusionDetection(sensorConn2):
+def IntrusionDetection(scon2):
+    # global variables
+    global deviceId
+    global intruderAlert
+    global keypadString
+    global sensorConn2
+    global camera
+    sensorConn2 = scon2
+
+
+    deviceId = "1234"
+    intruderAlert = False
+    keypadString = ""
+
+    # GPIO setup
+
+    GPIO.setwarnings(False)
+    GPIO.setmode(GPIO.BCM)
+
+    # this GPIO pin is connected to the infared sensor
+
+    global PIR_PIN
+    PIR_PIN = 14
+
+    # Initialize GPIO ports for the led
+
+    GPIO.setup(PIR_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+
+    # this GPIO pin is connected to the led light
+
+    global LED_PIN_RED
+    global LED_PIN_GRN
+    global LED_PIN_BLU
+
+    LED_PIN_RED = 17
+    LED_PIN_GRN = 27
+    LED_PIN_BLU = 22
+
+    # Initialize GPIO ports for the LED
+
+    GPIO.setup(LED_PIN_RED, GPIO.OUT, initial=GPIO.LOW)
+    GPIO.setup(LED_PIN_GRN, GPIO.OUT, initial=GPIO.LOW)
+    GPIO.setup(LED_PIN_BLU, GPIO.OUT, initial=GPIO.LOW)
+
+    # these GPIO pins are connected to the keypad
+    L1 = 5
+    L2 = 6
+    L3 = 13
+    L4 = 19
+
+    C1 = 26
+    C2 = 16
+    C3 = 20
+    C4 = 21
+
+    KEYPAD = [
+        ["1", "2", "3", "A"],
+        ["4", "5", "6", "B"],
+        ["7", "8", "9", "C"],
+        ["*", "0", "#", "D"]
+    ]
+
+    ROW_PINS = [L1, L2, L3, L4]
+    COL_PINS = [C1, C2, C3, C4]
+
+    # initialize the keypad library
+    factory = rpi_gpio.KeypadFactory()
+    keypad = factory.create_keypad(
+        keypad=KEYPAD, row_pins=ROW_PINS, col_pins=COL_PINS)
+
+    # function to disarm/reset the device
+
+
+    
+    keypad.registerKeyPressHandler(keypadPress)
+
+    # initialize the camera
+    try:
+        camera = PiCamera()
+    except PiCameraError: # for debugging:
+        print("Error: camera could not be initialized. Continuing...")
+
     try:
         init()
         # program while loop
