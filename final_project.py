@@ -78,6 +78,7 @@ def timerEnd(imagePath):
 def intruderDetected(channel):
     # send via pipe that the device is triggered to inform the web/system process
     sensorConn2.send("triggered")
+    print("PIR sensor triggered!")
     # remove the PIR_PIN listener
     GPIO.remove_event_detect(PIR_PIN)
     # capture and store an image from the camera
@@ -87,7 +88,7 @@ def intruderDetected(channel):
     t = threading.Thread(target=flashLED)
     t.start()
     # start the 30 second timer in a different thread
-    S = threading.Timer(30.0, timerEnd(imagePath))
+    S = threading.Timer(30.0, timerEnd, args=(imagePath,))
     S.start()
 
 # sensorConn2 is a Connection object for a Pipe, given by flaskapp.py/System
