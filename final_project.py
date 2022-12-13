@@ -61,9 +61,9 @@ def flashLED():
 
 
 def takePhoto():
-    timeStamp = str(datetime.datetime.now())
-    directory = "/home/Hat/ECE525/FinalProject/SecurityCam/"
-    imagePath = directory + "/img" + timeStamp + ".jpg"
+    timeStamp = str(datetime.now())
+    directory = "/home/pi/525rpisecurity/SecurityCam/"
+    imagePath = directory + "img" + timeStamp + ".jpg"
     camera.capture(imagePath)
     print("Saved image: " + imagePath)
     return imagePath
