@@ -91,6 +91,18 @@ def system():
             if conn1.poll():
                 receivedCode = conn1.recv() #don't care about web server codes(?)
                 stateConn1.send(current_state)
+            #New state came in the sensors (disarmed/alert?):
+            if(sensorConn1.poll()):
+                current_state = sensorConn1.recv()
+            time.sleep(POLLING_INTERVAL)
+            #Do NOT send out triggered state over sensorConn! Handled by final_project.py
+
+        #Case 4: Trigger countdown expired, set to disarmed if sensors allow for it
+        while(current_state == "alert"):
+            #Still handle webserver requests:
+            if conn1.poll():
+                receivedCode = conn1.recv() #don't care about web server codes(?)
+                stateConn1.send(current_state)
             #New state came in the sensors (disarmed?):
             if(sensorConn1.poll()):
                 current_state = sensorConn1.recv()

@@ -83,6 +83,7 @@ def timerEnd(imagePath):
     if(intruderAlert):
         sendEmailAlert(imagePath)
         print("email sent.")
+        sensorConn2.send("alert") #let the webserver show alert page
 
 
 def intruderDetected(channel):
