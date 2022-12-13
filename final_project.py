@@ -29,7 +29,7 @@ def keypadPress(key):
         print(keypadString)
         if (len(keypadString) >= 4):
          # 4 symbols were typed, compare the string with that of the password
-            if (keypadString == "1234"):
+            if (keypadString == deviceId):
                 # disarm the device
                 print("disarming device")
                 disarmDevice()
@@ -102,7 +102,7 @@ def intruderDetected(channel):
     S.start()
 
 # sensorConn2 is a Connection object for a Pipe, given by flaskapp.py/System
-def IntrusionDetection(scon2):
+def IntrusionDetection(scon2, secretCode):
     # global variables
     global deviceId
     global keypadString
@@ -111,7 +111,8 @@ def IntrusionDetection(scon2):
     sensorConn2 = scon2
 
 
-    deviceId = "1234"
+    deviceId = secretCode
+    global intruderAlert
     intruderAlert = False
     keypadString = ""
 

@@ -113,7 +113,7 @@ def main():
     processes.append(process)
     #Sensor/input logic for connected devices:
     process = multiprocessing.Process(target=final_project.IntrusionDetection, 
-                                      args=(sensorConn2,))
+                                      args=(sensorConn2,SECRET_CODE,))
     process.start()
     processes.append(process)
     #wait for all processes to finish
