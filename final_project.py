@@ -14,6 +14,7 @@ def disarmDevice():
     # send via pipe that the device is now disarmed to inform the web/system process
     sensorConn2.send("disarmed")
     # set intruder alert to false (turns off the LED and breaks out of the main while function)
+    global intruderAlert
     intruderAlert = False
 
 # keypad button press interupt function
@@ -22,19 +23,21 @@ def disarmDevice():
 def keypadPress(key):
     if intruderAlert:
         # add key to the end of the keypadString
+        global keypadString
         keypadString = keypadString + key
         # print code to screen
         print(keypadString)
-        if (len(keypadString) == 4):
+        if (len(keypadString) >= 4):
          # 4 symbols were typed, compare the string with that of the password
             if (keypadString == "1234"):
                 # disarm the device
+                print("disarming device")
                 disarmDevice()
             else:
                 # indicate that the user inputted incorrect pin inside of the console
                 print("Incorrect Password, Please retype the correct code")
                 # reset the keypadString
-                keypadString == ""
+                keypadString = ""
 
 
 
@@ -101,7 +104,6 @@ def intruderDetected(channel):
 def IntrusionDetection(scon2):
     # global variables
     global deviceId
-    global intruderAlert
     global keypadString
     global sensorConn2
     global camera
@@ -109,7 +111,7 @@ def IntrusionDetection(scon2):
 
 
     deviceId = "1234"
-    intruderAlert = False
+    #intruderAlert = False
     keypadString = ""
 
     # GPIO setup
