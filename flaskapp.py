@@ -78,17 +78,24 @@ def system():
                     print("Incorrect code sent while armed.")
                 stateConn1.send(current_state)
             else:
+                if(sensorConn1.poll()):
+                    #New state came in the sensors (triggered?):
+                    current_state = sensorConn1.recv()
+                    print("New state from sensor while armed:", current_state)
                 time.sleep(POLLING_INTERVAL)
                 continue
 
-        #Case 3: System is triggered, set it to disarmed if code is input on keypad
+        #Case 3: System is triggered and counting down, set to disarmed if sensors allow for it
         while(current_state == "triggered"):
-                print("current_state set to triggered")
-                #Do NOT send out triggered state to final_project.py! It'll handle it
-
-        #Case 4: System is alerted, send out the photo and maybe do other things?
-        while(current_state == "alert"):
-                print("current_state set to alert")
+            #Still handle webserver requests:
+            if conn1.poll():
+                receivedCode = conn1.recv() #don't care about web server codes(?)
+                stateConn1.send(current_state)
+            #New state came in the sensors (disarmed?):
+            if(sensorConn1.poll()):
+                current_state = sensorConn1.recv()
+            time.sleep(POLLING_INTERVAL)
+            #Do NOT send out triggered state over sensorConn! Handled by final_project.py
 
 
 def run_website():
