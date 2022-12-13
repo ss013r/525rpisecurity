@@ -45,19 +45,24 @@ def init():
 
 
 def flashLED():
+    print(intruderAlert, ", LED Flash starting...")
     while intruderAlert:
+        print("LED 1")
         GPIO.output(LED_PIN_RED, GPIO.HIGH)
         GPIO.output(LED_PIN_GRN, GPIO.LOW)
         GPIO.output(LED_PIN_BLU, GPIO.LOW)
         time.sleep(1)
+        print("LED 2")
         GPIO.output(LED_PIN_RED, GPIO.LOW)
         GPIO.output(LED_PIN_GRN, GPIO.HIGH)
         GPIO.output(LED_PIN_BLU, GPIO.LOW)
         time.sleep(1)
+        print("LED 2")
         GPIO.output(LED_PIN_RED, GPIO.LOW)
         GPIO.output(LED_PIN_GRN, GPIO.LOW)
         GPIO.output(LED_PIN_BLU, GPIO.HIGH)
         time.sleep(1)
+        print("LED End")
 
 
 def takePhoto():
@@ -84,6 +89,7 @@ def intruderDetected(channel):
     # capture and store an image from the camera
     imagePath = takePhoto()
     # set global variable intruderAlert to True
+    global intruderAlert #cursed!!!
     intruderAlert = True
     t = threading.Thread(target=flashLED)
     t.start()
